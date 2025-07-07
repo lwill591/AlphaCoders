@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Standup Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+    }
+    .team {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .member {
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: #ddd;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.3s;
+    }
+    .member.spoken {
+      background: #4caf50;
+      color: white;
+    }
+    .reset-btn {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Daily Standup Tracker</h1>
+<div class="team" id="team"></div>
+<button class="reset-btn" onclick="resetStatus()">Reset Day</button>
+
+<script>
+  const teamMembers = ["Alice", "Bob", "Carol", "Dave", "Emma", "Frank"];
+  const todayKey = `standup-${new Date().toISOString().split('T')[0]}`;
+
+  function loadStatus() {
+    const saved = JSON.parse(localStorage.getItem(todayKey)) || {};
+    teamMembers.forEach(name => {
+      const div = document.createElement("div");
+      div.className = "member";
+      div.textContent = name;
+      if (saved[name]) div.classList.add("spoken");
+      div.onclick = () => {
+        div.classList.toggle("spoken");
+        saved[name] = div.classList.contains("spoken");
+        localStorage.setItem(todayKey, JSON.stringify(saved));
+      };
+      document.getElementById("team").appendChild(div);
+    });
+  }
+
+  function resetStatus() {
+    localStorage.removeItem(todayKey);
+    location.reload();
+  }
+
+  loadStatus();
+</script>
+
+</body>
+</html>
